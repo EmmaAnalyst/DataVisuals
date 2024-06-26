@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Data Visualization</h1>
+    <canvas id="ageChart" width="400" height="200"></canvas>
+    <canvas id="heightWeightChart" width="400" height="200"></canvas>
+    <canvas id="systolicBPChart" width="400" height="200"></canvas>
+    <canvas id="diastolicBPChart" width="400" height="200"></canvas>
+
+    <script>
+        // Data passed from Flask
+        const result = { tojson };
+
+        // Age Distribution
+        const ageCtx = document.getElementById('ageChart').getContext('2d');
+        new Chart(ageCtx, {
+            type: 'bar',
+            data: {
+                labels: data.ages.map((_, i) => `Student ${i+1}`),
+                datasets: [{
+                    label: 'Age Distribution',
+                    data: data.ages,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Height vs Weight
+        const heightWeightCtx = document.getElementById('heightWeightChart').getContext('2d');
+        new Chart(heightWeightCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Height vs Weight',
+                    data: data.heights.map((height, index) => ({
+                        x: height,
+                        y: data.weights[index],
+                        gender: data.genders[index]
+                    })),
+                    backgroundColor: data.genders.map(gender => gender === 'Male' ? 'rgba(54, 162, 235, 0.2)' : 'rgba(255, 99, 132, 0.2)'),
+                    borderColor: data.genders.map(gender => gender === 'Male' ? 'rgba(54, 162, 235, 1)' : 'rgba(255, 99, 132, 1)')
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Average Systolic Blood Pressure by Gender
+        const systolicBPCtx = document.getElementById('systolicBPChart').getContext('2d');
+        const systolicData = {
+            labels: ['Male', 'Female'],
+            datasets: [{
+                label: 'Average Systolic Blood Pressure',
+                data: [
+                    data.systolic_bp.filter((_, i) => data.genders[i] === 'Male').reduce((a, b) => a + b, 0) / data.systolic_bp.filter((_, i) => data.genders[i] === 'Male').length,
+                    data.systolic_bp.filter((_, i) => data.genders[i] === 'Female').reduce((a, b) => a + b, 0) / data.systolic_bp.filter((_, i) => data.genders[i] === 'Female').length
+                ],
+                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                borderWidth: 1
+            }]
+        };
+        new Chart(systolicBPCtx, {
+            type: 'bar',
+            data: systolicData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Average Diastolic Blood Pressure by Gender
+        const diastolicBPCtx = document.getElementById('diastolicBPChart').getContext('2d');
+        const diastolicData = {
+            labels: ['Male', 'Female'],
+            datasets: [{
+                label: 'Average Diastolic Blood Pressure',
+                data: [
+                    data.diastolic_bp.filter((_, i) => data.genders[i] === 'Male').reduce((a, b) => a + b, 0) / data.diastolic_bp.filter((_, i) => data.genders[i] === 'Male').length,
+                    data.diastolic_bp.filter((_, i) => data.genders[i] === 'Female').reduce((a, b) => a + b, 0) / data.diastolic_bp.filter((_, i) => data.genders[i] === 'Female').length
+                ],
+                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                borderWidth: 1
+            }]
+        };
+        new Chart(diastolicBPCtx, {
+            type: 'bar',
+            data: diastolicData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
